@@ -1,0 +1,7 @@
+---
+# tasks file for vicenteg.mapr_mesos_slave
+
+- name: install mapr-mesos-slave
+  sudo_user: root
+  yum: name=mapr-mesos-master state=present
+  environment: proxy_env
