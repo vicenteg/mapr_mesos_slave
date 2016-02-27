@@ -3,5 +3,5 @@
 
 - name: install mapr-mesos-slave
   sudo_user: root
-  yum: name=mapr-mesos-master state=present
+  yum: name=mapr-mesos-slave state=present
   environment: proxy_env
