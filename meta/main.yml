@@ -147,5 +147,4 @@ galaxy_info:
   #- system
   #- web
 dependencies:
-  - { role: vicenteg.mapr_mesos }
-  
+  - { role: andrewrothstein.mesosphere-mesos, sudo_user: root }
