@@ -5,3 +5,24 @@
   sudo_user: root
   yum: name=mapr-mesos-slave state=present
   environment: proxy_env
+
+- name: test whether dhclient is running
+  command: pgrep -f dhclient
+  register: dhclient_running
+
+- name: configure dhclient if node uses DHCP
+  sudo_user: root
+  lineinfile: >
+    line="interface \"{{ansible_default_ipv4.interface}}\" { prepend domain-name-servers {{hostvars[groups['mesosmaster'][0]].ansible_default_ipv4.address}}; }"
+    dest=/etc/dhcp/dhclient.conf
+    regexp='domain-name-servers'
+  when: dhclient_running.rc == 0
+  notify: restart network
+
+- name: configure resolv.conf if not using DHCP
+  sudo_user: root
+  lineinfile: >
+    line="nameserver {{hostvars[groups['mesosmaster'][0]].ansible_default_ipv4.address}}"
+    dest=/etc/resolv.conf
+    insertafter="^search"
+  when: dhclient_running.rc != 0
