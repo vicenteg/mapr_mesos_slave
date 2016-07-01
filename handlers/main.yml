@@ -1,5 +1,6 @@
 ---
 # handlers file for vicenteg.mapr_mesos_master
 - name: restart network
-  sudo_user: root
+  become: yes
+  become_user: root
   command: service network restart

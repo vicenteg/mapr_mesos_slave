@@ -2,7 +2,8 @@
 # tasks file for vicenteg.mapr_mesos_slave
 
 - name: install mapr-mesos-slave
-  sudo_user: root
+  become: yes
+  become_user: root
   yum: name=mapr-mesos-slave state=present
   environment: proxy_env
 
@@ -11,7 +12,8 @@
   register: dhclient_running
 
 - name: configure dhclient if node uses DHCP
-  sudo_user: root
+  become: yes
+  become_user: root
   lineinfile: >
     line="interface \"{{ansible_default_ipv4.interface}}\" { prepend domain-name-servers {{hostvars[groups['mesosmaster'][0]].ansible_default_ipv4.address}}; }"
     dest=/etc/dhcp/dhclient.conf
@@ -20,7 +22,8 @@
   notify: restart network
 
 - name: configure resolv.conf if not using DHCP
-  sudo_user: root
+  become: yes
+  become_user: root
   lineinfile: >
     line="nameserver {{hostvars[groups['mesosmaster'][0]].ansible_default_ipv4.address}}"
     dest=/etc/resolv.conf
