@@ -5,7 +5,7 @@
   become: yes
   become_user: root
   yum: name=mapr-mesos-slave state=present
-  environment: proxy_env
+  environment: '{{proxy_env}}'
 
 - name: test whether dhclient is running
   command: pgrep -f dhclient
