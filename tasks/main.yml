@@ -15,7 +15,7 @@
   become: yes
   become_user: root
   lineinfile: >
-    line="interface \"{{ansible_default_ipv4.interface}}\" { prepend domain-name-servers {{hostvars[groups['mesosmaster'][0]].ansible_default_ipv4.address}}; }"
+    line="interface \"{{ansible_default_ipv4.interface}}\" { prepend domain-name-servers {% for h in groups['mesosmaster'] %}{{hostvars[h].ansible_default_ipv4.address}}{% if not loop.last %},{% endif %}{% endfor %}; }"
     dest=/etc/dhcp/dhclient.conf
     regexp='domain-name-servers'
   when: dhclient_running.rc == 0
@@ -25,7 +25,9 @@
   become: yes
   become_user: root
   lineinfile: >
-    line="nameserver {{hostvars[groups['mesosmaster'][0]].ansible_default_ipv4.address}}"
+    line="nameserver {{hostvars[item].ansible_default_ipv4.address}}"
+    #line="nameserver {{hostvars[groups['mesosmaster'][0]].ansible_default_ipv4.address}}"
     dest=/etc/resolv.conf
     insertafter="^search"
+  with_items: '{{groups.mesosmaster}}'
   when: dhclient_running.rc != 0
